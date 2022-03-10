@@ -57,12 +57,7 @@ const Cart = observer(({cart}) => (
 const CartPage = ({cart}) => {
     return (
         <>
-            <Cart cart={cart} />
-            {cart.items.length > 0 && (
-                <>
-                    
-                </>
-            )}    
+            <Cart cart={cart} />  
         </>
     )
 }

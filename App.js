@@ -9,15 +9,21 @@
 import React, {useState} from 'react';
 
 import {
+  Button,
   SafeAreaView,
   StyleSheet,
 } from 'react-native';
-/* ------------------------------ React Native ------------------------------ */
-import {NativeRouter, Route, Routes, Animated} from 'react-router-native';
+import { LogBox } from 'react-native';
+/* ------------------------------ React navigator ------------------------------ */
+import {NavigationContainer} from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-/* ------------------------------- Components ------------------------------- */
+/* --------------------------- React vector icons --------------------------- */
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+/* ------------------------------- Components ------------------------------- */  
 import Main from './components/Main';
-import NavPanel from './components/NavPanel';
 import Products from './components/Products';
 import CartPage from './components/CartComp';
 
@@ -75,25 +81,67 @@ class Cart {
   }
 }
 
+
+
+const tabs = createBottomTabNavigator();
+
 const App = () => {
+
+  // the screens of the components
+  const ProductsScreen = ({navigation}) => (<Products cart={cart} />)
+  const MainScreen = ({navigation}) => (<Main />)
+  const CartScreen = ({navigation}) => (<CartPage cart={cart} />)
   
+  /**
+  * The Navigation with a observer on the cart
+  */
+  const Navigation = observer(({cart}) => ( 
+    <>
+      <NavigationContainer>
+        <tabs.Navigator initialRouteName='home'
+          screenOptions={({route}) => ({
+            tabBarIcon: ({focused, color, size}) => {
+              let iconName;
+
+              if (route.name === 'home') {
+                iconName = focused
+                  ? 'ios-home'
+                  : 'ios-home';
+              } else if (route.name === 'products') {
+                iconName = focused
+                  ? 'beer'
+                  : 'beer-outline';
+              } else if (route.name === 'cart') {
+                iconName = focused
+                  ? 'ios-cart'
+                  : 'ios-cart';
+              }
+
+              // You can return any component that you like here!
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            headerShown: false,
+          })}
+
+
+
+          tabBarOptions={{
+            activeTintColor: 'skyblue',
+            inactiveTintColor: 'gray',
+          }}>
+          <tabs.Screen name="home" component={MainScreen} />
+          <tabs.Screen name="products" component={ProductsScreen} />
+          <tabs.Screen name="cart" component={CartScreen} options={{tabBarBadge: cart.amount}} />
+        </tabs.Navigator>
+      </NavigationContainer>
+    </>
+  ))
+
   let cart = new Cart(); // Create a new cart
 
+
   return (
-    <>
-      <NativeRouter>
-        <SafeAreaView style={styles.MainContainer}>
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/products" element={<Products cart={cart} />} />
-            <Route path="/cart" element={<CartPage cart={cart} />} />
-          </Routes>
-          {/* The navigition panel */}
-          <NavPanel cart={cart}/> 
-          
-        </SafeAreaView>    
-      </NativeRouter>
-    </>
+    <Navigation cart={cart} />
   );
-};
+}
 export default App;

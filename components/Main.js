@@ -3,20 +3,22 @@ import { Image } from 'react-native';
 import {
     ScrollView,
     Text,
-    View,
+  View,
+    Button
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import styles from './styles';
 
 
-const Main = () => {
+const Main = ({navigation}) => {
 
   const Spacer = () => {
     return <View style={{height: 100}} />;
   };
     
   return (
-    <ScrollView>
-        
+    <SafeAreaView style={styles.MainContainer}>
+      <ScrollView>
       <Image source={require('./static/images/img1.jpg')} style={styles.headerImage} />
       <View style={styles.postInfo}>
           <Text style={styles.lightText}>
@@ -55,7 +57,8 @@ const Main = () => {
       </Text>
 
        <Spacer />
-    </ScrollView>
+      </ScrollView>
+      </SafeAreaView>
   )
 }
 
